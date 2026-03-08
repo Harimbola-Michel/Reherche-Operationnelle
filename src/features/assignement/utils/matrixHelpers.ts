@@ -1,7 +1,7 @@
 /**
  * Clones a 2 dimensional marix.
  */
-export function cloneMatrix(m: number[][]): number[][] {
+export function cloneMatrix<T>(m: T[][]): T[][] {
     return m.map((r) => [...r]);
 }
 
