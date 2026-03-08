@@ -12,5 +12,16 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
     const coveredRows = Array(n).fill(false);
     const coveredCols = Array(n).fill(false);
 
+    const snapshot = (type: HungarianStep["type"], message?: string) => {
+        steps.push({
+            type,
+            matrix: cloneMatrix(m),
+            framed: cloneMatrix(framed),
+            crossed: cloneMatrix(crossed),
+            coveredRows: [...coveredRows],
+            coveredCols: [...coveredCols],
+        });
+    };
+
     return steps;
 }
