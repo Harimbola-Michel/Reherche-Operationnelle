@@ -1,5 +1,10 @@
 import { HungarianStep } from "../types/step";
-import { cloneMatrix, createBoolMatrix } from "../utils/matrixHelpers";
+import {
+    cloneMatrix,
+    createBoolMatrix,
+    minCol,
+    minRow,
+} from "../utils/matrixHelpers";
 
 export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
     const steps: HungarianStep[] = [];
@@ -20,8 +25,31 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
             crossed: cloneMatrix(crossed),
             coveredRows: [...coveredRows],
             coveredCols: [...coveredCols],
+            message: message,
         });
     };
+    snapshot("INIT");
 
+    // COLUMN REDUCTION
+    for (let j = 0; j < n; j++) {
+        const min = minCol(m, j);
+        for (let i = 0; i < n; i++) {
+            m[i][j] -= min;
+        }
+    }
+    snapshot("COLUMN_REDUCTION", "Subtract column minimums");
+
+    // ROW REDUCTION
+    for (let i = 0; i < n; i++) {
+        const min = minRow(m[i]);
+        for (let j = 0; j < n; j++) {
+            m[i][j] -= min;
+        }
+    }
+    snapshot("ROW_REDUCTION", "Subtract row minimums");
+
+    // TODO: Add remaining Hungarian logic
+
+    snapshot("FINISHED", "Optimal assignment found");
     return steps;
 }
