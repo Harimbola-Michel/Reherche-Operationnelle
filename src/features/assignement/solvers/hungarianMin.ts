@@ -50,7 +50,7 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
 
     // Determination of an optimal coupling
     // Encadrer - Barrer
-    findOptimalCoupling(m, framed, crossed, snapshot);
+    const assignments = findOptimalCoupling(m, framed, crossed, snapshot);
 
     // TODO: Add remaining Hungarian logic
 
@@ -63,8 +63,9 @@ function findOptimalCoupling(
     framed: boolean[][],
     crossed: boolean[][],
     snapshot: (type: HungarianStep["type"], message?: string) => void,
-) {
+): number[][] {
     const n = matrix.length;
+    const assignments: number[][] = [];
     const coveredRows = new Set<number>();
     const coveredCols = new Set<number>();
 
@@ -96,6 +97,7 @@ function findOptimalCoupling(
         }
 
         framed[target[0]][target[1]] = true;
+        assignments.push(target);
         snapshot("FRAME_ZERO");
         coveredRows.add(target[0]);
         coveredCols.add(target[1]);
@@ -114,4 +116,5 @@ function findOptimalCoupling(
             }
         }
     }
+    return assignments;
 }
