@@ -17,6 +17,9 @@ export interface HungarianStep {
     framed: boolean[][];
     crossed: boolean[][];
 
+    markedRows: boolean[];
+    markedCols: boolean[];
+
     coveredRows: boolean[];
     coveredCols: boolean[];
 
