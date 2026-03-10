@@ -14,6 +14,8 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
 
     const framed = createBoolMatrix(n);
     const crossed = createBoolMatrix(n);
+    const markedRows = Array(n).fill(false);
+    const markedCols = Array(n).fill(false);
     const coveredRows = Array(n).fill(false);
     const coveredCols = Array(n).fill(false);
 
@@ -23,6 +25,8 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
             matrix: cloneMatrix(m),
             framed: cloneMatrix(framed),
             crossed: cloneMatrix(crossed),
+            markedRows: [...markedRows],
+            markedCols: [...markedCols],
             coveredRows: [...coveredRows],
             coveredCols: [...coveredCols],
             message: message,
