@@ -6,6 +6,8 @@ export type StepType =
     | "CROSS_ZERO"
     | "COVER_COLUMN"
     | "COVER_ROW"
+    | "MARKING_COLUMN"
+    | "MARKING_ROW"
     | "ADJUST_MATRIX"
     | "FINISHED";
 
