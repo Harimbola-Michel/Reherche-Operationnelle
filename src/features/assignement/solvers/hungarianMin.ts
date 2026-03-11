@@ -56,7 +56,28 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
     // Le Encadrer - Barrer an'i Mr
     // Assignments are the framed zeros throughout the matrix
     const assignments = findOptimalCoupling(m, framed, crossed, snapshot);
-    performMarking(m, markedRows, markedCols, assignments, snapshot);
+    const [markedRowsId, markedColsId] = performMarking(
+        m,
+        markedRows,
+        markedCols,
+        assignments,
+        snapshot,
+    );
+
+    // Cover non-marked rows
+    for (let i = 0; i < n; i++) {
+        if (!markedRowsId.has(i)) {
+            coveredRows[i] = true;
+            snapshot("COVER_ROW");
+        }
+    }
+    // Cover marked cols
+    for (let i = 0; i < n; i++) {
+        if (markedColsId.has(i)) {
+            coveredCols[i] = true;
+            snapshot("COVER_COLUMN");
+        }
+    }
 
     // TODO: Add remaining Hungarian logic
 
@@ -152,40 +173,40 @@ function performMarking(
     }
 
     // Get the index of the marked rows and columns (value == true)
-    let markedRowsIdx: Set<number> = markedRows.reduce(
+    const markedRowsIds: Set<number> = markedRows.reduce(
         (out, value, idx) => (value ? out.add(idx) : out),
         new Set<number>(),
     );
-    let markedColsIdx: Set<number> = markedCols.reduce(
+    const markedColsIds: Set<number> = markedCols.reduce(
         (out, value, idx) => (value ? out.add(idx) : out),
         new Set<number>(),
     );
 
     while (true) {
-        const beforeCount = markedRowsIdx.size + markedColsIdx.size;
+        const beforeCount = markedRowsIds.size + markedColsIds.size;
 
         // Mark columns that have zeros in marked rows
-        for (let i of markedRowsIdx) {
+        for (let i of markedRowsIds) {
             for (let j = 0; j < n; j++) {
                 if (matrix[i][j] === 0) {
                     markedCols[j] = true;
-                    markedColsIdx.add(j);
+                    markedColsIds.add(j);
                     snapshot("MARKING_COLUMN");
                 }
             }
         }
         // Mark columns that have assignments in marked columns
-        for (let j of markedColsIdx) {
+        for (let j of markedColsIds) {
             if (j in assignedRowsByCol) {
                 markedRows[assignedRowsByCol[j]] = true;
-                markedRowsIdx.add(assignedRowsByCol[j]);
+                markedRowsIds.add(assignedRowsByCol[j]);
                 snapshot("MARKING_ROW");
             }
         }
 
-        const afterCount = markedRowsIdx.size + markedColsIdx.size;
+        const afterCount = markedRowsIds.size + markedColsIds.size;
         if (afterCount === beforeCount) break;
     }
 
-    return [markedRowsIdx, markedColsIdx];
+    return [markedRowsIds, markedColsIds];
 }
