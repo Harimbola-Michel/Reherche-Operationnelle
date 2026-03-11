@@ -8,6 +8,7 @@ export type StepType =
     | "COVER_ROW"
     | "MARKING_COLUMN"
     | "MARKING_ROW"
+    | "MINIMAL_SUPPORT"
     | "ADJUST_MATRIX"
     | "FINISHED";
 
@@ -24,6 +25,8 @@ export interface HungarianStep {
 
     coveredRows: boolean[];
     coveredCols: boolean[];
+
+    minimalSupport: number;
 
     message?: string;
 }
