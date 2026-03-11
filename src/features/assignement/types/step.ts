@@ -16,6 +16,7 @@ export interface HungarianStep {
     type: StepType;
 
     matrix: number[][];
+    minimalCost: number[];
 
     framed: boolean[][];
     crossed: boolean[][];
