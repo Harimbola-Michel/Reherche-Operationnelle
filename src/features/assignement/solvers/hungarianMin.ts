@@ -11,6 +11,7 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
 
     const n = matrix.length;
     const m = cloneMatrix(matrix);
+    const minimalCost: number[] = [];
 
     const framed = createBoolMatrix(n);
     const crossed = createBoolMatrix(n);
@@ -24,6 +25,7 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
         steps.push({
             type,
             matrix: cloneMatrix(m),
+            minimalCost: minimalCost,
             framed: cloneMatrix(framed),
             crossed: cloneMatrix(crossed),
             markedRows: [...markedRows],
@@ -39,6 +41,7 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
     // COLUMN REDUCTION
     for (let j = 0; j < n; j++) {
         const min = minCol(m, j);
+        minimalCost.push(min);
         for (let i = 0; i < n; i++) {
             m[i][j] -= min;
         }
@@ -48,52 +51,72 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
     // ROW REDUCTION
     for (let i = 0; i < n; i++) {
         const min = minRow(m[i]);
+        minimalCost.push(min);
         for (let j = 0; j < n; j++) {
             m[i][j] -= min;
         }
     }
     snapshot("ROW_REDUCTION", "Subtract row minimums");
 
-    // Determination of an optimal coupling
-    // Le Encadrer - Barrer an'i Mr
-    // Assignments are the framed zeros throughout the matrix
-    const assignments = findOptimalCoupling(m, framed, crossed, snapshot);
-    const [markedRowsId, markedColsId] = performMarking(
-        m,
-        markedRows,
-        markedCols,
-        assignments,
-        snapshot,
-    );
+    while (true) {
+        // Determination of an optimal coupling
+        // Le Encadrer - Barrer an'i Mr
+        // Assignments are the framed zeros throughout the matrix
+        const assignments = findOptimalCoupling(m, framed, crossed, snapshot);
+        const [markedRowsId, markedColsId] = performMarking(
+            m,
+            markedRows,
+            markedCols,
+            assignments,
+            snapshot,
+        );
 
-    // Cover non-marked rows
-    for (let i = 0; i < n; i++) {
-        if (!markedRowsId.has(i)) {
-            coveredRows[i] = true;
-            snapshot("COVER_ROW");
+        if (assignments.length == n) {
+            break;
         }
-    }
-    // Cover marked cols
-    for (let i = 0; i < n; i++) {
-        if (markedColsId.has(i)) {
-            coveredCols[i] = true;
-            snapshot("COVER_COLUMN");
-        }
-    }
 
-    // Finding the minimal support
-    for (let i = 0; i < n; i++) {
-        if (markedRowsId.has(i)) {
-            for (let j = 0; j < n; j++) {
-                if (!markedColsId.has(j)) {
-                    minimalSupport = Math.min(minimalSupport, m[i][j]);
+        // Cover non-marked rows
+        for (let i = 0; i < n; i++) {
+            if (!markedRowsId.has(i)) {
+                coveredRows[i] = true;
+                snapshot("COVER_ROW");
+            }
+        }
+        // Cover marked cols
+        for (let i = 0; i < n; i++) {
+            if (markedColsId.has(i)) {
+                coveredCols[i] = true;
+                snapshot("COVER_COLUMN");
+            }
+        }
+
+        // Finding the minimal support
+        for (let i = 0; i < n; i++) {
+            if (markedRowsId.has(i)) {
+                for (let j = 0; j < n; j++) {
+                    if (!markedColsId.has(j)) {
+                        minimalSupport = Math.min(minimalSupport, m[i][j]);
+                    }
                 }
             }
         }
-    }
-    snapshot("MINIMAL_SUPPORT");
+        snapshot("MINIMAL_SUPPORT");
 
-    // TODO: Add remaining Hungarian logic
+        // Adjust the matrix: substract from uncovered, add to intersections
+        for (let i = 0; i < n; i++) {
+            for (let j = 0; j < n; j++) {
+                if (markedRowsId.has(i) && !markedColsId.has(j)) {
+                    m[i][j] -= minimalSupport;
+                    snapshot("ADJUST_MATRIX");
+                } else if (!markedRowsId.has(i) && markedColsId.has(j)) {
+                    m[i][j] += minimalSupport;
+                    snapshot("ADJUST_MATRIX");
+                }
+            }
+        }
+
+        // TODO: Add remaining Hungarian logic
+    }
 
     snapshot("FINISHED", "Optimal assignment found");
     return steps;
