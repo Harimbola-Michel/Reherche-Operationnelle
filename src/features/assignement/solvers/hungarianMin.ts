@@ -11,7 +11,7 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
 
     const n = matrix.length;
     const m = cloneMatrix(matrix);
-    const minimalCost: number[] = [];
+    let assignments: number[][] = [];
 
     const framed = createBoolMatrix(n);
     const crossed = createBoolMatrix(n);
@@ -25,7 +25,7 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
         steps.push({
             type,
             matrix: cloneMatrix(m),
-            minimalCost: minimalCost,
+            assignments: assignments,
             framed: cloneMatrix(framed),
             crossed: cloneMatrix(crossed),
             markedRows: [...markedRows],
@@ -41,7 +41,6 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
     // COLUMN REDUCTION
     for (let j = 0; j < n; j++) {
         const min = minCol(m, j);
-        minimalCost.push(min);
         for (let i = 0; i < n; i++) {
             m[i][j] -= min;
         }
@@ -51,7 +50,6 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
     // ROW REDUCTION
     for (let i = 0; i < n; i++) {
         const min = minRow(m[i]);
-        minimalCost.push(min);
         for (let j = 0; j < n; j++) {
             m[i][j] -= min;
         }
@@ -62,7 +60,7 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
         // Determination of an optimal coupling
         // Le Encadrer - Barrer an'i Mr
         // Assignments are the framed zeros throughout the matrix
-        const assignments = findOptimalCoupling(m, framed, crossed, snapshot);
+        assignments = findOptimalCoupling(m, framed, crossed, snapshot);
         const [markedRowsId, markedColsId] = performMarking(
             m,
             markedRows,
@@ -114,8 +112,6 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
                 }
             }
         }
-
-        // TODO: Add remaining Hungarian logic
     }
 
     snapshot("FINISHED", "Optimal assignment found");
