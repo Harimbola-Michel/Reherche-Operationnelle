@@ -1,5 +1,6 @@
 export type StepType =
     | "INIT"
+    | "COMPLEMENT_100"
     | "ROW_REDUCTION"
     | "COLUMN_REDUCTION"
     | "FRAME_ZERO"
