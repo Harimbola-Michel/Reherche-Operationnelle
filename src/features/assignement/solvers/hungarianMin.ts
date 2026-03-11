@@ -53,8 +53,10 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
     snapshot("ROW_REDUCTION", "Subtract row minimums");
 
     // Determination of an optimal coupling
-    // Encadrer - Barrer
+    // Le Encadrer - Barrer an'i Mr
+    // assignments are the framed zeros throughout the matrix
     const assignments = findOptimalCoupling(m, framed, crossed, snapshot);
+    const [markRows, markCols] = performMarking(m, assignments, snapshot);
 
     // TODO: Add remaining Hungarian logic
 
@@ -121,4 +123,54 @@ function findOptimalCoupling(
         }
     }
     return assignments;
+}
+
+function performMarking(
+    matrix: number[][],
+    assignments: number[][],
+    snapshot: (type: HungarianStep["type"], messsage?: string) => void,
+): Set<number>[] {
+    const n = matrix.length;
+    // Record the assignments as a key-value pair of col-row
+    const assignedRowsByCol: Record<number, number> = assignments.reduce(
+        (accumulator, currentValue) => {
+            const [row, column] = currentValue;
+            accumulator[column] = row;
+            return accumulator;
+        },
+        {} as Record<string, number>,
+    );
+
+    const excludedValues = new Set(Object.values(assignedRowsByCol));
+    const markedRows = new Set<number>();
+    const markedCols = new Set<number>();
+    // Mark rows not assigned
+    for (let i = 0; i < n; i++) {
+        if (!excludedValues.has(i)) {
+            markedRows.add(i);
+        }
+    }
+
+    while (true) {
+        const beforeCount = markedRows.size + markedCols.size;
+
+        // Mark columns that have zeros in marked rows
+        for (let i of markedRows) {
+            for (let j = 0; j < n; j++) {
+                if (matrix[i][j] === 0) {
+                    markedCols.add(j);
+                }
+            }
+        }
+        // Mark columns that have assignments in marked columns
+        for (let j of markedCols) {
+            if (j in assignedRowsByCol) {
+                markedRows.add(assignedRowsByCol[j]);
+            }
+        }
+
+        if (markedRows.size + markedCols.size === beforeCount) break;
+    }
+
+    return [markedRows, markedCols];
 }
