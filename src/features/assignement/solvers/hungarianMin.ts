@@ -18,6 +18,7 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
     const markedCols = Array(n).fill(false);
     const coveredRows = Array(n).fill(false);
     const coveredCols = Array(n).fill(false);
+    let minimalSupport = Infinity;
 
     const snapshot = (type: HungarianStep["type"], message?: string) => {
         steps.push({
@@ -29,6 +30,7 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
             markedCols: [...markedCols],
             coveredRows: [...coveredRows],
             coveredCols: [...coveredCols],
+            minimalSupport: minimalSupport,
             message: message,
         });
     };
@@ -78,6 +80,18 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
             snapshot("COVER_COLUMN");
         }
     }
+
+    // Finding the minimal support
+    for (let i = 0; i < n; i++) {
+        if (markedRowsId.has(i)) {
+            for (let j = 0; j < n; j++) {
+                if (!markedColsId.has(j)) {
+                    minimalSupport = Math.min(minimalSupport, m[i][j]);
+                }
+            }
+        }
+    }
+    snapshot("MINIMAL_SUPPORT");
 
     // TODO: Add remaining Hungarian logic
 
