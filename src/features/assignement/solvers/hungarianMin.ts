@@ -36,7 +36,6 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
             message: message,
         });
     };
-    snapshot("INIT");
 
     // COLUMN REDUCTION
     for (let j = 0; j < n; j++) {
