@@ -131,7 +131,7 @@ function performMarking(
     markedCols: boolean[],
     assignments: number[][],
     snapshot: (type: HungarianStep["type"], messsage?: string) => void,
-) {
+): Set<number>[] {
     const n = matrix.length;
     // Record the assignments as a key-value pair of col-row
     const assignedRowsByCol: Record<number, number> = assignments.reduce(
@@ -186,4 +186,6 @@ function performMarking(
         const afterCount = markedRowsIdx.size + markedColsIdx.size;
         if (afterCount === beforeCount) break;
     }
+
+    return [markedRowsIdx, markedColsIdx];
 }
