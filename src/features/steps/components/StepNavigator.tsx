@@ -23,20 +23,16 @@ export function StepNavigator({
   const progress = totalSteps > 1 ? currentIndex / (totalSteps - 1) : 0;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
 
       {/* Progress */}
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <div className="flex justify-between items-center">
           <span className="font-mono text-xs font-bold text-slate-600 dark:text-slate-300">
             Étape <span className="text-sky-600 dark:text-sky-400">{currentIndex + 1}</span>
           </span>
-          <span className="font-mono text-xs text-slate-400 dark:text-slate-500">
-            / {totalSteps}
-          </span>
+          <span className="font-mono text-xs text-slate-400">/ {totalSteps}</span>
         </div>
-
-        {/* Barre cliquable */}
         <div
           className="relative h-2 bg-slate-100 dark:bg-slate-800 rounded-full cursor-pointer group border border-slate-200 dark:border-slate-700"
           onClick={(e) => {
@@ -61,16 +57,14 @@ export function StepNavigator({
       </div>
 
       {/* Boutons */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5 sm:gap-2">
 
         {/* Reset */}
         <button
           onClick={onReset}
           title="Revenir au début"
-          className="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:border-slate-300 transition-all font-mono text-sm shadow-sm"
-        >
-          ↩
-        </button>
+          className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-500 hover:text-slate-700 hover:border-slate-300 transition-all font-mono text-sm shadow-sm"
+        >↩</button>
 
         {/* Précédent */}
         <motion.button
@@ -78,24 +72,23 @@ export function StepNavigator({
           disabled={isFirst}
           whileTap={isFirst ? {} : { scale: 0.96 }}
           className={cn(
-            "flex-1 h-10 flex items-center justify-center gap-1.5 rounded-xl",
-            "border font-mono text-xs font-bold tracking-wide transition-all shadow-sm",
+            "flex-1 h-9 sm:h-10 flex items-center justify-center gap-1 sm:gap-1.5 rounded-xl",
+            "border font-mono text-[11px] sm:text-xs font-bold tracking-wide transition-all shadow-sm",
             isFirst
               ? "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-300 dark:text-slate-600 cursor-not-allowed"
-              : "border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-400 cursor-pointer"
+              : "border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer"
           )}
         >
-          ← Précédent
+          ← <span className="hidden sm:inline">Précédent</span><span className="sm:hidden">Préc.</span>
         </motion.button>
 
         {/* Play / Pause */}
         <motion.button
           onClick={onPlay}
           whileTap={{ scale: 0.9 }}
-          whileHover={{ scale: 1.05 }}
           title={isPlaying ? "Pause" : "Lecture auto"}
           className={cn(
-            "w-10 h-10 rounded-xl border flex items-center justify-center text-sm transition-all shadow-sm",
+            "w-9 h-9 sm:w-10 sm:h-10 rounded-xl border flex items-center justify-center text-sm transition-all shadow-sm",
             isPlaying
               ? "bg-sky-500 border-sky-500 text-white hover:bg-sky-600"
               : "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-sky-400 hover:text-sky-600"
@@ -117,19 +110,20 @@ export function StepNavigator({
           disabled={isLast}
           whileTap={isLast ? {} : { scale: 0.96 }}
           className={cn(
-            "flex-1 h-10 flex items-center justify-center gap-1.5 rounded-xl",
-            "border font-mono text-xs font-bold tracking-wide transition-all shadow-sm",
+            "flex-1 h-9 sm:h-10 flex items-center justify-center gap-1 sm:gap-1.5 rounded-xl",
+            "border font-mono text-[11px] sm:text-xs font-bold tracking-wide transition-all shadow-sm",
             isLast
               ? "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-300 dark:text-slate-600 cursor-not-allowed"
               : "border-sky-500 bg-sky-500 text-white hover:bg-sky-600 hover:border-sky-600 cursor-pointer"
           )}
         >
-          Suivant →
+          <span className="hidden sm:inline">Suivant</span><span className="sm:hidden">Suiv.</span> →
         </motion.button>
 
       </div>
 
-      <p className="text-center font-mono text-[10px] text-slate-400 dark:text-slate-600 tracking-wider">
+      {/* Hint clavier — masqué sur mobile */}
+      <p className="hidden sm:block text-center font-mono text-[10px] text-slate-400 tracking-wider">
         ← → naviguer · Espace lecture auto
       </p>
     </div>
