@@ -3,33 +3,33 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "@/styles/globals.css";
 import { Toaster } from "sonner";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
+const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Affectation Min-Max",
   description: "Algorithme Hongrois — Recherche Opérationnelle",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="fr">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}
-        <Toaster position="top-right" richColors closeButton />
+        <Toaster
+          richColors
+          closeButton
+          duration={1000}
+          visibleToasts={1}
+          position="top-left"
+          toastOptions={{
+            style: {
+              fontFamily: "monospace",
+              fontSize: "12px",
+              maxWidth: "320px",
+            },
+          }}
+        />
       </body>
     </html>
   );
