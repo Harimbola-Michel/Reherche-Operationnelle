@@ -2,13 +2,11 @@
 
 import { useState } from "react";
 import { MatrixInput } from "@/features/input";
-import { StepViewer } from "@/features/steps";
-import { useStepStore } from "@/features/steps";
+import { StepViewer, useStepStore } from "@/features/steps";
 import { solveHungarianMin } from "@/features/assignement/solvers/hungarianMin";
 import { solveHungarianMax } from "@/features/assignement/solvers/hungarianMax";
 import { Mode } from "@/store/assignmentStore";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast, Toaster } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Home() {
@@ -28,25 +26,23 @@ export default function Home() {
       0
     );
 
-    // Stocker les étapes dans le store + matrice originale
     setSteps(steps);
     setOriginalMatrix(matrix);
 
-    toast.success(
-      `Coût optimal : ${cost} — ${last.assignments.length} affectations · ${steps.length} étapes`
-    );
+    toast.success(`Coût optimal : ${cost}`, {
+      description: `${last.assignments.length} affectations · ${steps.length} étapes`,
+    });
 
-    // Basculer automatiquement vers la vue étapes
     setView("steps");
   }
 
   return (
     <main className="min-h-screen bg-background">
-      <ToastContainer position="top-right" autoClose={3000} theme="dark" />
+      <Toaster position="top-right" richColors closeButton />
 
       {/* Tabs */}
       <div className="flex justify-center pt-8 pb-2">
-        <div className="flex border border-border rounded-xl overflow-hidden">
+        <div className="flex border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden shadow-sm">
           {(["input", "steps"] as const).map((v) => (
             <button
               key={v}
@@ -54,8 +50,8 @@ export default function Home() {
               className={[
                 "px-6 py-2 font-mono text-xs font-bold uppercase tracking-widest transition-colors",
                 view === v
-                  ? "bg-foreground text-background"
-                  : "text-muted-foreground hover:bg-muted",
+                  ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
+                  : "text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 bg-white dark:bg-slate-900",
               ].join(" ")}
             >
               {v === "input" ? "① Matrice" : "② Étapes"}
@@ -72,7 +68,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16 }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: 0.22 }}
           >
             <MatrixInput onSolve={handleSolve} />
           </motion.div>
@@ -82,7 +78,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16 }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: 0.22 }}
           >
             <StepViewer originalMatrix={originalMatrix} />
           </motion.div>
