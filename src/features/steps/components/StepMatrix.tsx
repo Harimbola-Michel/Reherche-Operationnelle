@@ -36,15 +36,16 @@ function CellRow({ i, n, step }: { i: number; n: number; step: HungarianStep }) 
     <Fragment>
       <div className={axisClass}>A{i + 1}</div>
       {Array.from({ length: n }, (_, j) => {
-        const val        = step.matrix[i][j];
-        const isFramed   = step.framed[i][j];
-        const isCrossed  = step.crossed[i][j];
-        const isAssigned = step.assignments.some(([r, c]) => r === i && c === j);
-        const isCovRow   = step.coveredRows[i];
-        const isCovCol   = step.coveredCols[j];
-        const isMarkRow  = step.markedRows[i];
-        const isMarkCol  = step.markedCols[j];
-        const isZero     = val === 0;
+        const val              = step.matrix[i][j];
+        const isFramed         = step.framed[i][j];
+        const isCrossed        = step.crossed[i][j];
+        const isAssigned       = step.assignments.some(([r, c]) => r === i && c === j);
+        const isCovRow         = step.coveredRows[i];
+        const isCovCol         = step.coveredCols[j];
+        const isMarkRow        = step.markedRows[i];
+        const isMarkCol        = step.markedCols[j];
+        const isZero           = val === 0;
+        const isMinimalSupport = val === step.minimalSupport;
 
         // Pick background
         let bg = "bg-white dark:bg-slate-900";
@@ -56,10 +57,11 @@ function CellRow({ i, n, step }: { i: number; n: number; step: HungarianStep }) 
 
         // Pick text color
         let textColor = "text-slate-800 dark:text-slate-100";
-        if (isAssigned)      textColor = "text-emerald-700 dark:text-emerald-300 font-black";
-        else if (isFramed)   textColor = "text-sky-700 dark:text-sky-300 font-black";
-        else if (isCrossed)  textColor = "text-rose-500 dark:text-rose-400";
-        else if (isZero)     textColor = "text-amber-600 dark:text-amber-400 font-black";
+        if (isAssigned)            textColor = "text-emerald-700 dark:text-emerald-300 font-black";
+        else if (isFramed)         textColor = "text-sky-700 dark:text-sky-300 font-black";
+        else if (isCrossed)        textColor = "text-rose-500 dark:text-rose-400";
+        else if (isZero)           textColor = "text-amber-600 dark:text-amber-400 font-black";
+        else if (isMinimalSupport) bg = "bg-red-300 dark:bg-red-200 font-black";
 
         return (
           <motion.div
