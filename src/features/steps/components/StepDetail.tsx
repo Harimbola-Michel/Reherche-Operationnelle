@@ -12,7 +12,6 @@ interface StepDetailProps {
 export function StepDetail({ step, originalMatrix, stepIndex }: StepDetailProps) {
   const hasAssignments = step.assignments.length > 0;
   const isFinished = step.type === "FINISHED";
-
   const totalCost =
     isFinished && originalMatrix
       ? step.assignments.reduce((sum, [r, c]) => sum + originalMatrix[r][c], 0)
@@ -22,15 +21,15 @@ export function StepDetail({ step, originalMatrix, stepIndex }: StepDetailProps)
     <AnimatePresence mode="wait">
       <motion.div
         key={stepIndex}
-        initial={{ opacity: 0, y: 8 }}
+        initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -8 }}
-        transition={{ duration: 0.22 }}
+        exit={{ opacity: 0, y: -6 }}
+        transition={{ duration: 0.2 }}
         className="space-y-3"
       >
-        {/* Message de l'étape */}
+        {/* Message */}
         {step.message && (
-          <p className="font-mono text-xs text-muted-foreground italic border-l-2 border-border pl-3">
+          <p className="font-mono text-xs text-slate-500 dark:text-slate-400 italic border-l-2 border-slate-300 dark:border-slate-600 pl-3">
             {step.message}
           </p>
         )}
@@ -38,24 +37,24 @@ export function StepDetail({ step, originalMatrix, stepIndex }: StepDetailProps)
         {/* Support minimal */}
         {step.minimalSupport !== Infinity && step.type === "MINIMAL_SUPPORT" && (
           <div className="flex items-center gap-2">
-            <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">
+            <span className="font-mono text-[11px] text-slate-500 uppercase tracking-wider">
               Support minimal
             </span>
             <motion.span
               initial={{ scale: 0.7 }}
               animate={{ scale: 1 }}
-              transition={{ type: "spring", stiffness: 500, damping: 25 }}
-              className="font-mono text-sm font-bold text-orange-300 bg-orange-950/40 border border-orange-800/40 px-2 py-0.5 rounded-md"
+              transition={{ type: "spring", stiffness: 500, damping: 22 }}
+              className="font-mono text-sm font-black text-orange-700 dark:text-orange-300 bg-orange-100 dark:bg-orange-900/50 border border-orange-300 dark:border-orange-700 px-2.5 py-0.5 rounded-lg"
             >
               {step.minimalSupport}
             </motion.span>
           </div>
         )}
 
-        {/* Affectations en cours */}
+        {/* Affectations */}
         {hasAssignments && (
-          <div className="space-y-1.5">
-            <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">
+          <div className="space-y-2">
+            <span className="font-mono text-[11px] text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">
               Affectations ({step.assignments.length})
             </span>
             <div className="flex flex-wrap gap-2">
@@ -64,12 +63,12 @@ export function StepDetail({ step, originalMatrix, stepIndex }: StepDetailProps)
                   key={`${r}-${c}`}
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: idx * 0.04, type: "spring", stiffness: 400, damping: 22 }}
-                  className="font-mono text-xs bg-green-950/40 border border-green-800/40 text-green-300 px-2.5 py-1 rounded-lg"
+                  transition={{ delay: idx * 0.04, type: "spring", stiffness: 400, damping: 20 }}
+                  className="font-mono text-xs bg-emerald-50 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 px-2.5 py-1 rounded-lg"
                 >
                   A{r + 1} → T{c + 1}
                   {originalMatrix && (
-                    <span className="ml-1.5 text-green-500/70">
+                    <span className="ml-1.5 text-emerald-500 dark:text-emerald-500 font-bold">
                       ({originalMatrix[r][c]})
                     </span>
                   )}
@@ -84,13 +83,13 @@ export function StepDetail({ step, originalMatrix, stepIndex }: StepDetailProps)
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.15, type: "spring", stiffness: 300, damping: 20 }}
-            className="flex items-center justify-between bg-green-950/30 border border-green-800/40 rounded-xl px-4 py-3"
+            transition={{ delay: 0.12, type: "spring", stiffness: 280, damping: 20 }}
+            className="flex items-center justify-between bg-emerald-500 rounded-xl px-5 py-3"
           >
-            <span className="font-mono text-xs text-green-400/70 uppercase tracking-wider">
+            <span className="font-mono text-xs text-emerald-100 uppercase tracking-widest font-bold">
               Coût optimal
             </span>
-            <span className="font-mono text-2xl font-bold text-green-300">
+            <span className="font-mono text-3xl font-black text-white">
               {totalCost}
             </span>
           </motion.div>

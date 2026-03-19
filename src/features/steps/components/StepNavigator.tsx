@@ -17,30 +17,28 @@ interface StepNavigatorProps {
 }
 
 export function StepNavigator({
-  currentIndex,
-  totalSteps,
-  isFirst,
-  isLast,
-  isPlaying,
-  onPrev,
-  onNext,
-  onPlay,
-  onReset,
-  onGoTo,
+  currentIndex, totalSteps, isFirst, isLast,
+  isPlaying, onPrev, onNext, onPlay, onReset, onGoTo,
 }: StepNavigatorProps) {
   const progress = totalSteps > 1 ? currentIndex / (totalSteps - 1) : 0;
 
   return (
     <div className="space-y-4">
 
-      {/* Barre de progression cliquable */}
-      <div className="space-y-1.5">
-        <div className="flex justify-between font-mono text-[10px] text-muted-foreground">
-          <span>Étape {currentIndex + 1}</span>
-          <span>{totalSteps} étapes</span>
+      {/* Progress */}
+      <div className="space-y-2">
+        <div className="flex justify-between items-center">
+          <span className="font-mono text-xs font-bold text-slate-600 dark:text-slate-300">
+            Étape <span className="text-sky-600 dark:text-sky-400">{currentIndex + 1}</span>
+          </span>
+          <span className="font-mono text-xs text-slate-400 dark:text-slate-500">
+            / {totalSteps}
+          </span>
         </div>
+
+        {/* Barre cliquable */}
         <div
-          className="relative h-1.5 bg-muted rounded-full cursor-pointer group"
+          className="relative h-2 bg-slate-100 dark:bg-slate-800 rounded-full cursor-pointer group border border-slate-200 dark:border-slate-700"
           onClick={(e) => {
             const rect = e.currentTarget.getBoundingClientRect();
             const ratio = (e.clientX - rect.left) / rect.width;
@@ -48,29 +46,28 @@ export function StepNavigator({
           }}
         >
           <motion.div
-            className="absolute left-0 top-0 h-full bg-blue-500 rounded-full origin-left"
+            className="absolute left-0 top-0 h-full bg-sky-500 rounded-full origin-left"
             animate={{ scaleX: progress }}
             initial={{ scaleX: 0 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
+            transition={{ duration: 0.22, ease: "easeOut" }}
             style={{ width: "100%" }}
           />
-          {/* Curseur */}
           <motion.div
-            className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-blue-400 border-2 border-background shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-white border-2 border-sky-500 shadow opacity-0 group-hover:opacity-100 transition-opacity"
             animate={{ left: `${progress * 100}%`, translateX: "-50%" }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
+            transition={{ duration: 0.22 }}
           />
         </div>
       </div>
 
       {/* Boutons */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
 
         {/* Reset */}
         <button
           onClick={onReset}
-          className={cn(navBtn, "w-9 h-9 text-base")}
           title="Revenir au début"
+          className="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:border-slate-300 transition-all font-mono text-sm shadow-sm"
         >
           ↩
         </button>
@@ -79,37 +76,36 @@ export function StepNavigator({
         <motion.button
           onClick={onPrev}
           disabled={isFirst}
-          whileTap={{ scale: 0.92 }}
-          whileHover={{ scale: 1.04 }}
+          whileTap={isFirst ? {} : { scale: 0.96 }}
           className={cn(
-            navBtn,
-            "flex-1 gap-2 font-mono text-xs font-bold tracking-wider",
-            isFirst && "opacity-30 cursor-not-allowed"
+            "flex-1 h-10 flex items-center justify-center gap-1.5 rounded-xl",
+            "border font-mono text-xs font-bold tracking-wide transition-all shadow-sm",
+            isFirst
+              ? "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-300 dark:text-slate-600 cursor-not-allowed"
+              : "border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-400 cursor-pointer"
           )}
         >
-          <span className="text-base leading-none">←</span>
-          Précédent
+          ← Précédent
         </motion.button>
 
         {/* Play / Pause */}
         <motion.button
           onClick={onPlay}
-          whileTap={{ scale: 0.92 }}
-          whileHover={{ scale: 1.04 }}
+          whileTap={{ scale: 0.9 }}
+          whileHover={{ scale: 1.05 }}
+          title={isPlaying ? "Pause" : "Lecture auto"}
           className={cn(
-            "w-11 h-11 rounded-xl border border-border flex items-center justify-center",
-            "font-mono text-sm transition-colors",
+            "w-10 h-10 rounded-xl border flex items-center justify-center text-sm transition-all shadow-sm",
             isPlaying
-              ? "bg-blue-950 text-blue-300 border-blue-800/60"
-              : "bg-muted text-foreground hover:bg-muted/80"
+              ? "bg-sky-500 border-sky-500 text-white hover:bg-sky-600"
+              : "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-sky-400 hover:text-sky-600"
           )}
-          title={isPlaying ? "Pause (Espace)" : "Lecture automatique (Espace)"}
         >
           <motion.span
             key={isPlaying ? "pause" : "play"}
-            initial={{ scale: 0.6, opacity: 0 }}
+            initial={{ scale: 0.5, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.15 }}
+            transition={{ duration: 0.12 }}
           >
             {isPlaying ? "⏸" : "▶"}
           </motion.span>
@@ -119,29 +115,23 @@ export function StepNavigator({
         <motion.button
           onClick={onNext}
           disabled={isLast}
-          whileTap={{ scale: 0.92 }}
-          whileHover={{ scale: 1.04 }}
+          whileTap={isLast ? {} : { scale: 0.96 }}
           className={cn(
-            navBtn,
-            "flex-1 gap-2 font-mono text-xs font-bold tracking-wider",
-            isLast && "opacity-30 cursor-not-allowed",
-            !isLast && "bg-blue-950/30 text-blue-300 border-blue-800/40 hover:bg-blue-950/50"
+            "flex-1 h-10 flex items-center justify-center gap-1.5 rounded-xl",
+            "border font-mono text-xs font-bold tracking-wide transition-all shadow-sm",
+            isLast
+              ? "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-300 dark:text-slate-600 cursor-not-allowed"
+              : "border-sky-500 bg-sky-500 text-white hover:bg-sky-600 hover:border-sky-600 cursor-pointer"
           )}
         >
-          Suivant
-          <span className="text-base leading-none">→</span>
+          Suivant →
         </motion.button>
 
       </div>
 
-      {/* Hint clavier */}
-      <p className="text-center font-mono text-[10px] text-muted-foreground/50 tracking-wider">
-        ← → pour naviguer · Espace pour lecture auto
+      <p className="text-center font-mono text-[10px] text-slate-400 dark:text-slate-600 tracking-wider">
+        ← → naviguer · Espace lecture auto
       </p>
     </div>
   );
 }
-
-const navBtn =
-  "flex items-center justify-center h-11 rounded-xl border border-border " +
-  "bg-background text-foreground transition-colors hover:bg-muted";

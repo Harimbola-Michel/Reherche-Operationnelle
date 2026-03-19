@@ -18,35 +18,21 @@ export function StepMatrix({ step, direction, stepIndex }: StepMatrixProps) {
     <AnimatePresence mode="wait">
       <motion.div
         key={stepIndex}
-        initial={{
-          opacity: 0,
-          x: direction === "forward" ? 48 : -48,
-          scale: 0.97,
-        }}
+        initial={{ opacity: 0, x: direction === "forward" ? 56 : -56, scale: 0.96 }}
         animate={{ opacity: 1, x: 0, scale: 1 }}
-        exit={{
-          opacity: 0,
-          x: direction === "forward" ? -48 : 48,
-          scale: 0.97,
-        }}
-        transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
+        exit={{ opacity: 0, x: direction === "forward" ? -56 : 56, scale: 0.96 }}
+        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
         className="w-full"
       >
         <div
-          className="border border-border rounded-xl overflow-hidden bg-background"
-          style={{ display: "grid", gridTemplateColumns: `40px repeat(${n}, 1fr)` }}
+          className="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm"
+          style={{ display: "grid", gridTemplateColumns: `48px repeat(${n}, 1fr)` }}
         >
           {/* Corner */}
           <div className={axisClass} />
-
-          {/* Column headers */}
           {Array.from({ length: n }, (_, j) => (
-            <div key={`ch-${j}`} className={axisClass}>
-              T{j + 1}
-            </div>
+            <div key={`ch-${j}`} className={axisClass}>T{j + 1}</div>
           ))}
-
-          {/* Rows */}
           {Array.from({ length: n }, (_, i) => (
             <CellRow key={`r-${i}`} i={i} n={n} step={step} />
           ))}
@@ -56,75 +42,91 @@ export function StepMatrix({ step, direction, stepIndex }: StepMatrixProps) {
   );
 }
 
-function CellRow({
-  i, n, step,
-}: {
-  i: number; n: number; step: HungarianStep;
-}) {
+function CellRow({ i, n, step }: { i: number; n: number; step: HungarianStep }) {
   return (
     <Fragment>
-      {/* Row header */}
       <div className={axisClass}>A{i + 1}</div>
-
-      {/* Cells */}
       {Array.from({ length: n }, (_, j) => {
-        const val = step.matrix[i][j];
-        const isFramed = step.framed[i][j];
-        const isCrossed = step.crossed[i][j];
+        const val        = step.matrix[i][j];
+        const isFramed   = step.framed[i][j];
+        const isCrossed  = step.crossed[i][j];
         const isAssigned = step.assignments.some(([r, c]) => r === i && c === j);
-        const isCoveredRow = step.coveredRows[i];
-        const isCoveredCol = step.coveredCols[j];
-        const isMarkedRow = step.markedRows[i];
-        const isMarkedCol = step.markedCols[j];
-        const isZero = val === 0;
+        const isCovRow   = step.coveredRows[i];
+        const isCovCol   = step.coveredCols[j];
+        const isMarkRow  = step.markedRows[i];
+        const isMarkCol  = step.markedCols[j];
+        const isZero     = val === 0;
+
+        // Pick background
+        let bg = "bg-white dark:bg-slate-900";
+        if (isAssigned)                          bg = "bg-emerald-100 dark:bg-emerald-900/50";
+        else if (isFramed)                       bg = "bg-sky-100 dark:bg-sky-900/50";
+        else if (isCrossed)                      bg = "bg-rose-100 dark:bg-rose-900/40";
+        else if (isCovRow || isCovCol)           bg = "bg-amber-100 dark:bg-amber-900/40";
+        else if (isMarkRow || isMarkCol)         bg = "bg-violet-100 dark:bg-violet-900/40";
+
+        // Pick text color
+        let textColor = "text-slate-800 dark:text-slate-100";
+        if (isAssigned)      textColor = "text-emerald-700 dark:text-emerald-300 font-black";
+        else if (isFramed)   textColor = "text-sky-700 dark:text-sky-300 font-black";
+        else if (isCrossed)  textColor = "text-rose-500 dark:text-rose-400";
+        else if (isZero)     textColor = "text-amber-600 dark:text-amber-400 font-black";
 
         return (
           <motion.div
             key={`cell-${i}-${j}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: (i * n + j) * 0.012, duration: 0.18 }}
+            transition={{ delay: (i * n + j) * 0.01, duration: 0.15 }}
             className={cn(
-              "relative flex items-center justify-center",
-              "min-h-[44px] border-r border-b border-border",
-              "font-mono text-sm font-bold tabular-nums select-none",
-              "transition-colors duration-200",
-              // Fond selon état — ordre important (le plus spécifique en premier)
-              isAssigned                                    && "bg-green-950/40",
-              isFramed   && !isAssigned                    && "bg-blue-950/30",
-              isCrossed                                    && "bg-red-950/20",
-              isCoveredRow && !isAssigned && !isFramed     && "bg-amber-950/20",
-              isCoveredCol && !isAssigned && !isFramed     && "bg-purple-950/20",
-              isMarkedRow  && !isAssigned                  && "bg-teal-950/20",
-              isMarkedCol  && !isAssigned && !isCoveredCol && "bg-teal-950/10",
-              // Couleur texte
-              isAssigned  ? "text-green-300"  :
-              isFramed    ? "text-blue-300"   :
-              isCrossed   ? "text-red-400 line-through" :
-              isZero      ? "text-amber-300"  :
-                            "text-foreground"
+              "relative flex items-center justify-center overflow-hidden",
+              "min-h-[52px] border-r border-b border-slate-200 dark:border-slate-700",
+              "font-mono text-sm tabular-nums select-none transition-colors duration-200",
+              bg, textColor
             )}
           >
-            {/* Cercle pour les zéros encadrés */}
+            {/* Encadrement animé */}
             {isFramed && (
               <motion.span
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: "spring", stiffness: 400, damping: 20 }}
-                className="absolute inset-1 rounded-full border-2 border-blue-400/60 pointer-events-none"
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ type: "spring", stiffness: 350, damping: 18 }}
+                className="absolute inset-[5px] rounded-full border-[2.5px] border-sky-500 dark:border-sky-400 pointer-events-none"
               />
             )}
 
-            {/* Croix pour les zéros barrés */}
-            {isCrossed && (
+            {/* Affectation finale — checkmark */}
+            {isAssigned && (
               <motion.span
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 400, damping: 18 }}
+                className="absolute top-1 right-1.5 text-emerald-500 text-[10px] font-black leading-none"
               >
-                <span className="absolute w-full h-px bg-red-400/60 rotate-45" />
-                <span className="absolute w-full h-px bg-red-400/60 -rotate-45" />
+                ✓
               </motion.span>
+            )}
+
+            {/* Croix barrée — diagonales CSS bornées dans la cellule */}
+            {isCrossed && (
+              <>
+                <motion.span
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                  transition={{ duration: 0.18 }}
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background: "linear-gradient(to bottom right, transparent calc(50% - 1px), #f87171 calc(50% - 1px), #f87171 calc(50% + 1px), transparent calc(50% + 1px))",
+                  }}
+                />
+                <motion.span
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                  transition={{ duration: 0.18, delay: 0.06 }}
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background: "linear-gradient(to bottom left, transparent calc(50% - 1px), #f87171 calc(50% - 1px), #f87171 calc(50% + 1px), transparent calc(50% + 1px))",
+                  }}
+                />
+              </>
             )}
 
             <span className="relative z-10">{val}</span>
@@ -136,6 +138,7 @@ function CellRow({
 }
 
 const axisClass =
-  "flex items-center justify-center font-mono text-[10px] font-bold " +
-  "text-muted-foreground bg-muted border-r border-b border-border " +
-  "px-1 py-2 tracking-wider select-none";
+  "flex items-center justify-center font-mono text-[11px] font-bold " +
+  "text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 " +
+  "border-r border-b border-slate-200 dark:border-slate-700 " +
+  "px-1 py-2.5 tracking-wider select-none";
