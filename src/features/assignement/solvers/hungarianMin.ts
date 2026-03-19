@@ -72,6 +72,9 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
             break;
         }
 
+        framed = createBoolMatrix(n);
+        crossed = createBoolMatrix(n);
+
         // Cover non-marked rows
         for (let i = 0; i < n; i++) {
             if (!markedRowsId.has(i)) {
@@ -119,6 +122,7 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
         markedCols = Array(n).fill(false);
         coveredRows = Array(n).fill(false);
         coveredCols = Array(n).fill(false);
+        minimalSupport = Infinity;
         snapshot("FRAME_ZERO");
     }
 
