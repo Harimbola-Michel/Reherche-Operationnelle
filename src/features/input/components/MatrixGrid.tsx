@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment } from "react";
 import { useMatrixInput } from "../hooks/useMatrixInput";
 import { MatrixCell } from "./MatrixCell";
 import { cn } from "@/lib/utils";
@@ -28,23 +29,23 @@ export function MatrixGrid({ hook }: MatrixGridProps) {
 
         {/* En-têtes colonnes */}
         {Array.from({ length: cols }, (_, j) => (
-          <div key={j} className={cn(axisClass, "border-r border-b")}>
+          <div key={`col-${j}`} className={cn(axisClass, "border-r border-b")}>
             T{j + 1}
           </div>
         ))}
 
         {/* Lignes de données */}
         {Array.from({ length: rows }, (_, i) => (
-          <>
+          <Fragment key={`row-${i}`}>
             {/* En-tête ligne */}
-            <div key={`row-${i}`} className={cn(axisClass, "border-r border-b")}>
+            <div className={cn(axisClass, "border-r border-b")}>
               A{i + 1}
             </div>
 
             {/* Cellules */}
             {Array.from({ length: cols }, (_, j) => (
               <MatrixCell
-                key={`${i}-${j}`}
+                key={`cell-${i}-${j}`}
                 ref={(el) => registerRef(i, j, el)}
                 value={matrix[i][j]}
                 highlight={getCellHighlight(i, j)}
@@ -54,7 +55,7 @@ export function MatrixGrid({ hook }: MatrixGridProps) {
                 onKeyDown={(e) => handleKeyDown(e, i, j)}
               />
             ))}
-          </>
+          </Fragment>
         ))}
       </div>
     </div>
