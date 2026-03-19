@@ -1,9 +1,7 @@
-
-
-export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <h1>Recherche Opérationnelle</h1>
-    </div>
-  );
-}
+export { MatrixInput } from "./components/MatrixInput";
+export { MatrixGrid } from "./components/MatrixGrid";
+export { MatrixCell } from "./components/MatrixCell";
+export { ModeToggle } from "./components/ModeToggle";
+export { SizeControl } from "./components/SizeControl";
+export { StatsBar } from "./components/StatsBar";
+export { useMatrixInput } from "./hooks/useMatrixInput";
