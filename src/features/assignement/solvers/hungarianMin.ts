@@ -72,9 +72,11 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
             break;
         }
 
+        assignments = [];
         framed = createBoolMatrix(n);
         crossed = createBoolMatrix(n);
 
+        snapshot("COVER_ROW");
         // Cover non-marked rows
         for (let i = 0; i < n; i++) {
             if (!markedRowsId.has(i)) {
@@ -115,7 +117,6 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
         snapshot("ADJUST_MATRIX");
 
         // Reinitialize variables
-        assignments = [];
         framed = createBoolMatrix(n);
         crossed = createBoolMatrix(n);
         markedRows = Array(n).fill(false);
@@ -140,6 +141,7 @@ function findOptimalCoupling(
     const assignments: number[][] = [];
     const coveredRows = new Set<number>();
     const coveredCols = new Set<number>();
+    let zeroCrossed = false;
 
     while (true) {
         let minZeros = Infinity;
@@ -178,15 +180,19 @@ function findOptimalCoupling(
         for (let j = 0; j < matrix.length; j++) {
             if (matrix[target[0]][j] == 0 && !framed[target[0]][j]) {
                 crossed[target[0]][j] = true;
+                zeroCrossed = true;
             }
         }
-        snapshot("CROSS_ZERO");
         for (let i = 0; i < matrix.length; i++) {
             if (matrix[i][target[1]] == 0 && !framed[i][target[1]]) {
                 crossed[i][target[1]] = true;
+                zeroCrossed = true;
             }
         }
-        snapshot("CROSS_ZERO");
+        if (zeroCrossed) {
+            snapshot("CROSS_ZERO");
+            zeroCrossed = false;
+        }
     }
     return assignments;
 }
