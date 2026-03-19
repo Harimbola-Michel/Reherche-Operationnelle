@@ -90,7 +90,7 @@ export function MatrixInput({ onSolve }: MatrixInputProps) {
             Recherche Opérationnelle
           </span>
           <h1 className="font-mono text-xl font-bold tracking-tight mt-2">
-            Matrice d&apos;<span className="text-muted-foreground font-normal">affectation</span>
+            Matrice d&apos;affectation
           </h1>
         </div>
         <ModeToggle mode={mode} onChange={setMode} />
