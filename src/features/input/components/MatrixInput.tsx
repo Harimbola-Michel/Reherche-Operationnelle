@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { toast } from "react-toastify";
+ import { toast } from "sonner";
 import { useMatrixInput } from "../hooks/useMatrixInput";
 import { MatrixGrid } from "./MatrixGrid";
 import { ModeToggle } from "./ModeToggle";
