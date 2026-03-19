@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { HungarianStep } from "@/features/assignement/types/step";
 import { cn } from "@/lib/utils";
 
@@ -45,7 +45,7 @@ function CellRow({ i, n, step }: { i: number; n: number; step: HungarianStep }) 
         const isMarkRow        = step.markedRows[i];
         const isMarkCol        = step.markedCols[j];
         const isZero           = val === 0;
-        const isMinimalSupport = val === step.minimalSupport;
+        const isMinimalSupport = val === step.minimalSupport && (step.type === "MINIMAL_SUPPORT");
 
         // Pick background
         let bg = "bg-white dark:bg-slate-900";
