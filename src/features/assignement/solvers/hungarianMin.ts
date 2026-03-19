@@ -13,12 +13,12 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
     const m = cloneMatrix(matrix);
     let assignments: number[][] = [];
 
-    const framed = createBoolMatrix(n);
-    const crossed = createBoolMatrix(n);
-    const markedRows = Array(n).fill(false);
-    const markedCols = Array(n).fill(false);
-    const coveredRows = Array(n).fill(false);
-    const coveredCols = Array(n).fill(false);
+    let framed = createBoolMatrix(n);
+    let crossed = createBoolMatrix(n);
+    let markedRows = Array(n).fill(false);
+    let markedCols = Array(n).fill(false);
+    let coveredRows = Array(n).fill(false);
+    let coveredCols = Array(n).fill(false);
     let minimalSupport = Infinity;
 
     const snapshot = (type: HungarianStep["type"], message?: string) => {
@@ -111,6 +111,15 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
                 }
             }
         }
+
+        assignments = [];
+        framed = createBoolMatrix(n);
+        crossed = createBoolMatrix(n);
+        markedRows = Array(n).fill(false);
+        markedCols = Array(n).fill(false);
+        coveredRows = Array(n).fill(false);
+        coveredCols = Array(n).fill(false);
+        snapshot("FRAME_ZERO");
     }
 
     snapshot("FINISHED", "Optimal assignment found");
