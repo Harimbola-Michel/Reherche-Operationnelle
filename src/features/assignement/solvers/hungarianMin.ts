@@ -76,16 +76,16 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
         for (let i = 0; i < n; i++) {
             if (!markedRowsId.has(i)) {
                 coveredRows[i] = true;
-                snapshot("COVER_ROW");
             }
         }
+        snapshot("COVER_ROW");
         // Cover marked cols
         for (let i = 0; i < n; i++) {
             if (markedColsId.has(i)) {
                 coveredCols[i] = true;
-                snapshot("COVER_COLUMN");
             }
         }
+        snapshot("COVER_COLUMN");
 
         // Finding the minimal support
         for (let i = 0; i < n; i++) {
@@ -104,14 +104,14 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
             for (let j = 0; j < n; j++) {
                 if (markedRowsId.has(i) && !markedColsId.has(j)) {
                     m[i][j] -= minimalSupport;
-                    snapshot("ADJUST_MATRIX");
                 } else if (!markedRowsId.has(i) && markedColsId.has(j)) {
                     m[i][j] += minimalSupport;
-                    snapshot("ADJUST_MATRIX");
                 }
             }
         }
+        snapshot("ADJUST_MATRIX");
 
+        // Reinitialize variables
         assignments = [];
         framed = createBoolMatrix(n);
         crossed = createBoolMatrix(n);
@@ -174,15 +174,15 @@ function findOptimalCoupling(
         for (let j = 0; j < matrix.length; j++) {
             if (matrix[target[0]][j] == 0 && !framed[target[0]][j]) {
                 crossed[target[0]][j] = true;
-                snapshot("CROSS_ZERO");
             }
         }
+        snapshot("CROSS_ZERO");
         for (let i = 0; i < matrix.length; i++) {
             if (matrix[i][target[1]] == 0 && !framed[i][target[1]]) {
                 crossed[i][target[1]] = true;
-                snapshot("CROSS_ZERO");
             }
         }
+        snapshot("CROSS_ZERO");
     }
     return assignments;
 }
@@ -232,18 +232,18 @@ function performMarking(
                 if (matrix[i][j] === 0) {
                     markedCols[j] = true;
                     markedColsIds.add(j);
-                    snapshot("MARKING_COLUMN");
                 }
             }
         }
+        snapshot("MARKING_COLUMN");
         // Mark columns that have assignments in marked columns
         for (let j of markedColsIds) {
             if (j in assignedRowsByCol) {
                 markedRows[assignedRowsByCol[j]] = true;
                 markedRowsIds.add(assignedRowsByCol[j]);
-                snapshot("MARKING_ROW");
             }
         }
+        snapshot("MARKING_ROW");
 
         const afterCount = markedRowsIds.size + markedColsIds.size;
         if (afterCount === beforeCount) break;
