@@ -117,8 +117,6 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
         snapshot("ADJUST_MATRIX");
 
         // Reinitialize variables
-        framed = createBoolMatrix(n);
-        crossed = createBoolMatrix(n);
         markedRows = Array(n).fill(false);
         markedCols = Array(n).fill(false);
         coveredRows = Array(n).fill(false);
@@ -127,6 +125,8 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
         snapshot("FRAME_ZERO");
     }
 
+    framed = createBoolMatrix(n);
+    crossed = createBoolMatrix(n);
     snapshot("FINISHED", "Optimal assignment found");
     return steps;
 }
