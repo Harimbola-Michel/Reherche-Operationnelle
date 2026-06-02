@@ -44,7 +44,7 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
             m[i][j] -= min;
         }
     }
-    snapshot("COLUMN_REDUCTION", "Subtract column minimums");
+    snapshot("COLUMN_REDUCTION", "Soustraire le minimum des colonnes");
 
     // ROW REDUCTION
     for (let i = 0; i < n; i++) {
@@ -53,7 +53,7 @@ export function solveHungarianMin(matrix: number[][]): HungarianStep[] {
             m[i][j] -= min;
         }
     }
-    snapshot("ROW_REDUCTION", "Subtract row minimums");
+    snapshot("ROW_REDUCTION", "Soustraire le minimum des lignes");
 
     while (true) {
         // Determination of an optimal coupling
